@@ -26,7 +26,7 @@ class KnightAIPlugin(Star):
             "timeout": int(config.get("API_TIMEOUT_2", 240)),
         }
 
-    async def _build_user_content(self, event: AstrMessageEvent, desc: str):
+    async def _build_user_content(self, event: AstrMessageEvent):
         items = []
         desc = await self._extract_prompt(event)
         imgs = await self._extract_images(event)
@@ -133,17 +133,9 @@ class KnightAIPlugin(Star):
         return s.strip()
 
     @filter.command("画图")
-    async def draw(self, event: AstrMessageEvent, desc: str = ""):
-        event.should_call_llm(False)
-        if not desc:
-            desc = self._parse_desc_from_message(event)
-        if not desc:
-            yield event.plain_result(
-                "请在命令后输入描述，或回复包含图片的消息后再使用本命令"
-            )
-            return
-
-        content = await self._build_user_content(event, desc)
+    async def draw(self, event: AstrMessageEvent):
+        event.should_call_llm(True)
+        content = await self._build_user_content(event)
 
         img_comp, reason1 = await self._call_api(self.api1, content)
         reason2 = None
