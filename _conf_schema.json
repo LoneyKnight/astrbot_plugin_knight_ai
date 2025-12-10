@@ -1,0 +1,42 @@
+{
+	"API_BASE_1": {
+		"type": "string",
+		"default": "",
+		"description": "主API基础地址"
+	},
+	"API_KEYS_1": {
+		"type": "list",
+		"default": [],
+		"description": "主API密钥列表"
+	},
+	"API_MODEL_1": {
+		"type": "string",
+		"default": "nano-banana",
+		"description": "主API模型"
+	},
+	"API_TIMEOUT_1": {
+		"type": "int",
+		"default": 240,
+		"description": "主API请求超时(秒)"
+	},
+	"API_BASE_2": {
+		"type": "string",
+		"default": "",
+		"description": "备API基础地址"
+	},
+	"API_KEYS_2": {
+		"type": "list",
+		"default": [],
+		"description": "备API密钥列表"
+	},
+	"API_MODEL_2": {
+		"type": "string",
+		"default": "nano-banana",
+		"description": "备API模型"
+	},
+	"API_TIMEOUT_2": {
+		"type": "int",
+		"default": 240,
+		"description": "备API请求超时(秒)"
+	}
+}
