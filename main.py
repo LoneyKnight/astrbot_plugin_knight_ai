@@ -5,6 +5,12 @@ from astrbot.api.all import *
 import httpx
 import re
 import mimetypes
+import os
+import uuid
+import time
+import base64
+from astrbot.core.utils.astrbot_path import get_astrbot_data_path
+from astrbot.core.utils.io import download_image_by_url
 
 
 @register("knight-ai", "绘图", "通过图像生成API生成图片", "1.0.0")
@@ -115,9 +121,26 @@ class KnightAIPlugin(Star):
                     md = msg.get("content", "")
                     b64, url = self._extract_image(md)
                     if b64:
-                        return Image.fromBase64(b64), None
+                        temp_dir = os.path.join(get_astrbot_data_path(), "temp")
+                        os.makedirs(temp_dir, exist_ok=True)
+                        filename = f"{int(time.time())}_{uuid.uuid4().hex[:8]}.jpg"
+                        file_path = os.path.join(temp_dir, filename)
+                        try:
+                            with open(file_path, "wb") as f:
+                                f.write(base64.b64decode(b64))
+                            return Image.fromFileSystem(file_path), None
+                        except Exception as e:
+                            last_reason = f"保存图片到本地失败：{str(e)}"
+                            keys.append(keys.pop(0))
+                            continue
                     if url:
-                        return Image.fromURL(url), None
+                        try:
+                            file_path = await download_image_by_url(url)
+                            return Image.fromFileSystem(file_path), None
+                        except Exception as e:
+                            last_reason = f"下载图片失败：{str(e)}"
+                            keys.append(keys.pop(0))
+                            continue
                     last_reason = "响应中未找到图片数据"
                     keys.append(keys.pop(0))
                 except Exception as e:
